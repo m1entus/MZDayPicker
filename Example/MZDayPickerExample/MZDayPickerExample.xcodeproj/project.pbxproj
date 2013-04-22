@@ -120,12 +120,12 @@
 		062E334B1725A9CC009B699E /* MZDayPicker */ = {
 			isa = PBXGroup;
 			children = (
-				062E334C1725A9DF009B699E /* MZDayPickerCell.m */,
 				062E334D1725A9DF009B699E /* MZDayPickerCell.h */,
-				062E334E1725A9DF009B699E /* MZDayPicker.m */,
-				062E334F1725A9DF009B699E /* MZDay.m */,
+				062E334C1725A9DF009B699E /* MZDayPickerCell.m */,
 				062E33501725A9DF009B699E /* MZDayPicker.h */,
+				062E334E1725A9DF009B699E /* MZDayPicker.m */,
 				062E33511725A9DF009B699E /* MZDay.h */,
+				062E334F1725A9DF009B699E /* MZDay.m */,
 			);
 			name = MZDayPicker;
 			sourceTree = "<group>";
@@ -325,6 +325,7 @@
 				062E334A1725A9A6009B699E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
