@@ -4,7 +4,7 @@ MZDayPicker
 An iOS day picker to allow users to select date
 
 [![](https://raw.github.com/m1entus/MZDayPicker/master/Screens/screen1.png)](https://raw.github.com/m1entus/MZDayPicker/master/Screens/screen1@2x.png)
-[![](https://raw.github.com/m1entus/MZDayPicker/master/Screens/screen2.png)](https://raw.github.com/m1entus/MZDayPicker/master/Screens/screen2@2x.png)
+[![](https://raw.github.com/m1entus/MZDayPicker/master/Screens/animation.gif)](https://raw.github.com/m1entus/MZDayPicker/master/Screens/animation.gif)
 
 ## How To Use
 
