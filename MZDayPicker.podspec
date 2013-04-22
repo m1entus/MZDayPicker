@@ -1,11 +1,11 @@
 Pod::Spec.new do |s|
   s.name         = "MZDayPicker"
   s.version      = "0.0.1"
-  s.summary      = "An iOS day picker to allow users to select date"
+  s.summary      = "An iOS day picker to allow users to select date."
 
   s.homepage     = "https://github.com/m1entus/MZDayPicker"
 
-  s.license      = { :type => 'MIT'}
+  s.license      = { :type => 'MIT', :file => 'LICENSE' }
 
   s.author       = { "Michał Zaborowski" => "m1entus@gmail.com" }
 
