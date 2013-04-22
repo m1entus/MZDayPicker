@@ -9,7 +9,7 @@
 #import "MZViewController.h"
 #import "MZDayPicker.h"
 
-@interface MZViewController () <WCDayPickerDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface MZViewController () <MZDayPickerDelegate, UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic,strong) NSMutableArray *tableData;
 @end
 

@@ -28,7 +28,7 @@
 
 @class MZDayPicker;
 
-@protocol WCDayPickerDelegate <NSObject>
+@protocol MZDayPickerDelegate <NSObject>
 @optional
 - (void)dayPicker:(MZDayPicker *)dayPicker willSelectDay:(MZDay *)day;
 - (void)dayPicker:(MZDayPicker *)dayPicker didSelectDay:(MZDay *)day;
@@ -62,7 +62,7 @@
 @property (nonatomic, readonly) NSInteger month;
 @property (nonatomic, readonly) NSInteger year;
 
-@property (nonatomic, weak) id <WCDayPickerDelegate> delegate;
+@property (nonatomic, weak) id <MZDayPickerDelegate> delegate;
 
 - (id)initWithFrame:(CGRect)frame dayCellSize:(CGSize)cellSize dayCellFooterHeight:(CGFloat)footerHeight month:(NSInteger)month year:(NSInteger)year;
 - (id)initWithFrame:(CGRect)frame month:(NSInteger)month year:(NSInteger)year;
