@@ -66,11 +66,11 @@ Implement the optional delegate method to be notified when a new day item is sel
 
 ## Requirements
 
-WCAlertView requires either iOS 5.x and above.
+MZDayPicker requires either iOS 5.x and above.
 
 ## ARC
 
-WCAlertView uses ARC.
+MZDayPicker uses ARC.
 
 ## Contact
 
