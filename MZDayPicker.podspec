@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
 
   s.author       = { "Michał Zaborowski" => "m1entus@gmail.com" }
 
-  s.source       = { :git => "https://github.com/m1entus/MZDayPicker.git", :tag => "0.0.1" }
+  s.source       = { :git => "https://github.com/m1entus/MZDayPicker.git", :tag => "0.0.2" }
   
   s.source_files = 'MZDayPicker/*.{h,m}'
   
