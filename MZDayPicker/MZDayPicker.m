@@ -70,6 +70,10 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 
 
 @interface MZDayPicker () <UITableViewDelegate, UITableViewDataSource>
+
+// initialFrame property is a hack for initWithCoder:
+@property (nonatomic, assign) CGRect initialFrame;
+
 @property (nonatomic, strong) NSIndexPath* currentIndex;
 
 @property (nonatomic, assign) CGSize dayCellSize;
@@ -201,6 +205,8 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 
 - (void)setFrame:(CGRect)frame
 {
+    if (CGRectIsEmpty(self.initialFrame)) self.initialFrame = frame;
+    
     [super setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, self.dayCellSize.height+self.dayCellFooterHeight)];
 }
 
@@ -257,7 +263,12 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 {
     if (self = [super initWithCoder:aDecoder]) {
         
-        self = [self initWithFrame:self.frame month:1 year:1970];
+        self =  [self initWithFrame:CGRectMake(0, 0, self.initialFrame.size.width, self.initialFrame.size.height) dayCellSize:CGSizeMake(self.initialFrame.size.height-kDefaultCellFooterHeight, self.initialFrame.size.height-kDefaultCellFooterHeight) dayCellFooterHeight:kDefaultCellFooterHeight month:1 year:1970];
+        
+        // Somethime cell is not in center (depend on size), this code correct it
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:_currentIndex];
+        CGFloat contentOffset = cell.center.y - (self.tableView.frame.size.width/2);
+        [self.tableView setContentOffset:CGPointMake(self.tableView.contentOffset.x, contentOffset) animated:NO];
     }
     
     return self;

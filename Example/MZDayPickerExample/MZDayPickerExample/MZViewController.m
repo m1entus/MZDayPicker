@@ -33,13 +33,18 @@
     //    scroll.dayLabelFontSize = 15.0f;
     [self.scroll setActiveDaysFrom:5 toDay:20];
 
-    [self.scroll setCurrentDay:12 animated:NO];
+    [self.scroll setCurrentDay:14 animated:NO];
     
     
     
     [self.view addSubview:self.scroll];
     
-    self.tableView.frame = CGRectMake(0, self.scroll.frame.size.height, self.tableView.frame.size.width, self.view.bounds.size.height-self.scroll.frame.size.height);
+    /*
+     * If you want to change y coordinate you need to do this in code for example:
+     * self.scroll.frame = CGRectMake(0, 60, 320, self.scroll.frame.size.height);
+     */
+
+    self.tableView.frame = CGRectMake(0, self.scroll.frame.origin.y + self.scroll.frame.size.height, self.tableView.frame.size.width, self.view.bounds.size.height-self.scroll.frame.size.height);
     
 }
 
