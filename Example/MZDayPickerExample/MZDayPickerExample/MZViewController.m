@@ -7,7 +7,7 @@
 //
 
 #import "MZViewController.h"
-#import "MZDayPicker.h"
+
 
 @interface MZViewController () <MZDayPickerDelegate, UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic,strong) NSMutableArray *tableData;
@@ -24,22 +24,22 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     
-	
-    MZDayPicker *scroll = [[MZDayPicker alloc] initWithFrame:self.view.bounds dayCellSize:CGSizeMake(64, 64) dayCellFooterHeight:4 month:9 year:2013];
-    scroll.delegate = self;
+	self.scroll.month = 9;
+    self.scroll.year = 2013;
+
+    self.scroll.delegate = self;
     
     //    scroll.dayNameLabelFontSize = 7.0f;
     //    scroll.dayLabelFontSize = 15.0f;
-    [scroll setActiveDaysFrom:5 toDay:20];
+    [self.scroll setActiveDaysFrom:5 toDay:20];
 
-    [scroll setCurrentDay:18 animated:YES];
-   
+    [self.scroll setCurrentDay:12 animated:NO];
     
-    [scroll reloadData];
     
-    [self.view addSubview:scroll];
     
-    self.tableView.frame = CGRectMake(0, scroll.frame.size.height, self.tableView.frame.size.width, self.view.bounds.size.height-scroll.frame.size.height);
+    [self.view addSubview:self.scroll];
+    
+    self.tableView.frame = CGRectMake(0, self.scroll.frame.size.height, self.tableView.frame.size.width, self.view.bounds.size.height-self.scroll.frame.size.height);
     
 }
 
@@ -95,6 +95,7 @@
 
 - (void)viewDidUnload {
     [self setTableView:nil];
+    [self setScroll:nil];
     [super viewDidUnload];
 }
 @end

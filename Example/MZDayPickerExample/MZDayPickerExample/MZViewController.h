@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MZDayPicker.h"
 
 @interface MZViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
+@property (weak, nonatomic) IBOutlet MZDayPicker *scroll;
 
 @end

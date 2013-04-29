@@ -71,12 +71,13 @@
 
 @property (nonatomic, assign) NSInteger currentDay;
 
-@property (nonatomic, readonly) NSInteger month;
-@property (nonatomic, readonly) NSInteger year;
+@property (nonatomic, assign) NSInteger month;
+@property (nonatomic, assign) NSInteger year;
 
 @property (nonatomic, weak) id<MZDayPickerDelegate> delegate;
 @property (nonatomic, weak) id<MZDayPickerDataSource> dataSource;
 
+- (id)initWithFrame:(CGRect)frame dayCellSize:(CGSize)cellSize dayCellFooterHeight:(CGFloat)footerHeight;
 - (id)initWithFrame:(CGRect)frame dayCellSize:(CGSize)cellSize dayCellFooterHeight:(CGFloat)footerHeight month:(NSInteger)month year:(NSInteger)year;
 - (id)initWithFrame:(CGRect)frame month:(NSInteger)month year:(NSInteger)year;
 

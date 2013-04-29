@@ -72,9 +72,6 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 @interface MZDayPicker () <UITableViewDelegate, UITableViewDataSource>
 @property (nonatomic, strong) NSIndexPath* currentIndex;
 
-@property (nonatomic, assign) NSInteger month;
-@property (nonatomic, assign) NSInteger year;
-
 @property (nonatomic, assign) CGSize dayCellSize;
 @property (nonatomic, assign) CGFloat dayCellFooterHeight;
 
@@ -88,6 +85,26 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 
 
 @implementation MZDayPicker
+
+- (void)setMonth:(NSInteger)month
+{
+    if (_month != month) {
+        _month = month;
+        
+        [self fillTableData];
+        [self setupTableViewContent];
+    }
+}
+
+- (void)setYear:(NSInteger)year
+{
+    if (_year != year) {
+        _year = year;
+        
+        [self fillTableData];
+        [self setupTableViewContent];
+    }
+}
 
 - (void)setDayLabelFontSize:(CGFloat)dayLabelFontSize
 {
@@ -231,6 +248,24 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         
         // UITableView need to load to call this
         [self performSelector:@selector(setupTableViewContent) withObject:nil afterDelay:0.1];
+        
+    }
+    return self;
+}
+
+- (id)initWithCoder:(NSCoder *)aDecoder
+{
+    if (self = [super initWithCoder:aDecoder]) {
+        
+        self = [self initWithFrame:self.frame month:1 year:1970];
+    }
+    
+    return self;
+}
+
+- (id)initWithFrame:(CGRect)frame dayCellSize:(CGSize)cellSize dayCellFooterHeight:(CGFloat)footerHeight
+{
+    if (self = [self initWithFrame:frame dayCellSize:CGSizeMake(kDefaultCellWidth, kDefaultCellHeight) dayCellFooterHeight:kDefaultCellFooterHeight month:1 year:1970]) {
         
     }
     return self;
