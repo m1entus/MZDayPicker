@@ -30,14 +30,19 @@
     
     //    scroll.dayNameLabelFontSize = 7.0f;
     //    scroll.dayLabelFontSize = 15.0f;
-    scroll.currentDay = 15;
     [scroll setActiveDaysFrom:5 toDay:20];
+
+    [scroll setCurrentDay:18 animated:YES];
+   
+    
+    [scroll reloadData];
     
     [self.view addSubview:scroll];
     
     self.tableView.frame = CGRectMake(0, scroll.frame.size.height, self.tableView.frame.size.width, self.view.bounds.size.height-scroll.frame.size.height);
     
 }
+
 
 - (void)dayPicker:(MZDayPicker *)dayPicker didSelectDay:(MZDay *)day
 {

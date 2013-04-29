@@ -55,7 +55,7 @@ NSInteger const kDefaultFinalInactiveDays = 8;
 #define kDefaultColorBottomBorder [UIColor colorWithRed:0.22f green:0.57f blue:0.80f alpha:1.00f]
 
 static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
-
+    
     if (row <= range.location+range.length  && row >= range.location ) {
         return YES;
     }
@@ -115,25 +115,34 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     [self setupTableViewContent];
 }
 
-- (void)setCurrentDay:(NSInteger)currentDay
+- (void)setCurrentDay:(NSInteger)currentDay animated:(BOOL)animated
 {
     if (_currentDay != currentDay) {
         _currentDay = currentDay;
         
-        // Hack: UITableView have bug, if i change conentInset scrolling to position not working properly
-        // It is used only here, in other place i callculate contentOffset manually
-        self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
-            
-        _currentIndex = [NSIndexPath indexPathForItem:currentDay+kDefaultInitialInactiveDays-1 inSection:0];
-
-        [self.tableView scrollToRowAtIndexPath:self.currentIndex
-                              atScrollPosition:UITableViewScrollPositionMiddle
-                                      animated:YES];
-        [self setupTableViewContent];
+        _currentIndex = [NSIndexPath indexPathForRow:currentDay+kDefaultInitialInactiveDays-1 inSection:0];
         
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:_currentIndex];
+        
+        if (cell) {
+            CGFloat contentOffset = cell.center.y - (self.tableView.frame.size.width/2);
+            
+            [self.tableView setContentOffset:CGPointMake(self.tableView.contentOffset.x, contentOffset) animated:animated];
+        } else {
+            
+            CGFloat contentSizeLimit = (kDefaultInitialInactiveDays*self.dayCellSize.width) + (kDefaultInitialInactiveDays/2*self.dayCellSize.width) + ((currentDay-kDefaultInitialInactiveDays-1)*self.dayCellSize.width) + (self.frame.size.width/2) - (self.dayCellSize.width/2) ;
+            
+            [self.tableView setContentOffset:CGPointMake(self.tableView.contentOffset.x, contentSizeLimit) animated:animated];
+        }
         
     }
 }
+
+- (void)setCurrentDay:(NSInteger)currentDay
+{
+    [self setCurrentDay:currentDay animated:NO];
+}
+
 
 - (void)setCurrentIndex:(NSIndexPath *)currentIndex {
     _currentIndex = currentIndex;
@@ -141,6 +150,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     //  In these situations you need to calculate the contentOffset manually for those cells.
     
     UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:currentIndex];
+    
     CGFloat contentOffset = cell.center.y - (self.tableView.frame.size.width/2);
     
     [self.tableView setContentOffset:CGPointMake(self.tableView.contentOffset.x, contentOffset) animated:YES];
@@ -148,7 +158,20 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     if ([self.delegate respondsToSelector:@selector(dayPicker:didSelectDay:)])
         [self.delegate dayPicker:self didSelectDay:self.tableDaysData[currentIndex.row]];
     
+    
+}
 
+- (MZDayPickerCell *)cellForDay:(MZDay *)day
+{
+    NSInteger dayIndex = [self.tableDaysData indexOfObject:day];
+    
+    return (MZDayPickerCell *)[self.tableView cellForRowAtIndexPath:[NSIndexPath indexPathForRow:dayIndex inSection:0]];
+}
+
+- (void)reloadData
+{
+    [self.tableView reloadData];
+    [self setupTableViewContent];
 }
 
 - (NSNumber *)numberOfDaysInCurrentMonth
@@ -165,7 +188,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 }
 
 - (id)initWithFrame:(CGRect)frame
-{    
+{
     if (self = [super initWithFrame:frame]) {
         
         _activeDayColor = kDefaultColorDay;
@@ -176,7 +199,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         _dayLabelZoomScale = kDefaultDayLabelMaxZoomValue;
         _dayLabelFontSize = kDefaultDayLabelFontSize;
         _dayNameLabelFontSize = kDefaultDayNameLabelFontSize;
-
+        
         [self setActiveDaysFrom:1 toDay:[self.numberOfDaysInCurrentMonth integerValue]-1];
         
         // Make the UITableView's height the width, and width the height so that when we rotate it it will fit exactly
@@ -196,7 +219,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         [self.tableView addGestureRecognizer:tapGesture];
         
         [self addSubview: self.tableView];
-
+        
         self.backgroundColor = kDefaultColorBackground;
         
         self.layer.frame = CGRectMake(0, 0, self.layer.frame.size.width, self.layer.frame.size.height-self.dayCellFooterHeight);
@@ -216,7 +239,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 - (id)initWithFrame:(CGRect)frame month:(NSInteger)month year:(NSInteger)year
 {
     if (self = [self initWithFrame:frame dayCellSize:CGSizeMake(kDefaultCellWidth, kDefaultCellHeight) dayCellFooterHeight:kDefaultCellFooterHeight month:month year:year]) {
-
+        
     }
     return self;
 }
@@ -242,16 +265,18 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 
 - (void)setupTableViewContent
 {
-    CGFloat liczbaMinus = 1;
+    // *|1|2|3|4|5
+    CGFloat startActiveDaysWidth = (kDefaultInitialInactiveDays*self.dayCellSize.width) + ((self.activeDays.location-1)*self.dayCellSize.width);
     
-    CGFloat insetLimit = (kDefaultInitialInactiveDays*self.dayCellSize.width) + ((self.activeDays.location-liczbaMinus)*self.dayCellSize.width) - (self.frame.size.width/2) + (self.dayCellSize.width/2);
+    // *|-|-|1|2|3|
+    CGFloat insetLimit = startActiveDaysWidth - (self.frame.size.width/2) + (self.dayCellSize.width/2);
     
     self.tableView.contentInset = UIEdgeInsetsMake(-insetLimit, 0, 0, 0);
     
-    CGFloat contentSizeLimit = (kDefaultInitialInactiveDays*self.dayCellSize.width) + ((self.activeDays.location-liczbaMinus)*self.dayCellSize.width) + ((self.activeDays.length+1)*self.dayCellSize.width) + (self.frame.size.width/2) - (self.dayCellSize.width/2) ;
+    CGFloat contentSizeLimit = startActiveDaysWidth + ((self.activeDays.length+1)*self.dayCellSize.width) + (self.frame.size.width/2) - (self.dayCellSize.width/2);
     
     self.tableView.contentSize = CGSizeMake(self.tableView.frame.size.height, contentSizeLimit);
-
+    
 }
 
 - (void)fillTableData
@@ -278,6 +303,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         MZDay *newDay = [[MZDay alloc] init];
         newDay.day = @(i);
         newDay.name = [dateFormatter stringFromDate:dateForDay];
+        newDay.date = dateForDay;
         
         [tableDaysData addObject:newDay];
     }
@@ -295,6 +321,8 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         newDay.name = [dateFormatter stringFromDate:dateForDay];
         newDay.month = @(self.month);
         newDay.year = @(self.year);
+        
+        newDay.date = dateForDay;
         
         [tableDaysData addObject:newDay];
     }
@@ -315,6 +343,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         MZDay *newDay = [[MZDay alloc] init];
         newDay.day = @(i);
         newDay.name = [dateFormatter stringFromDate:dateForDay];
+        newDay.date = dateForDay;
         
         [tableDaysData addObject:newDay];
     }
@@ -322,7 +351,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     self.tableDaysData = [tableDaysData copy];
     
     [self.tableView reloadData];
-
+    
 }
 
 #pragma mark - UITapGestureRecognizer
@@ -352,8 +381,12 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
     
+    if ([self.delegate respondsToSelector:@selector(dayPicker:scrollViewDidScroll:)]) {
+        [self.delegate dayPicker:self scrollViewDidScroll:scrollView];
+    }
+    
     CGPoint centerTableViewPoint = [self convertPoint:CGPointMake(self.frame.size.width/2.0, self.dayCellSize.height/2.0) toView:self.tableView];
-
+    
     // Zooming visible cell's
     for (MZDayPickerCell *cell in self.tableView.visibleCells) {
         
@@ -365,7 +398,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
             CGFloat zoomStep = cosf(M_PI_2*distance/self.dayCellSize.width);
             
             if (distance < self.dayCellSize.width && distance > -self.dayCellSize.width) {
-
+                
                 cell.dayLabel.font = [cell.dayLabel.font fontWithSize:self.dayLabelFontSize + self.dayLabelZoomScale * zoomStep];
                 [cell setBottomBorderSlideHeight:zoomStep];
                 
@@ -381,7 +414,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
                 
                 cell.containerView.backgroundColor = kDefaultColorBackground;
                 cell.containerView.layer.shadowOpacity = shadowStep;
-
+                
             } else {
                 cell.containerView.backgroundColor = [UIColor clearColor];
                 cell.containerView.layer.shadowOpacity = 0;
@@ -390,35 +423,43 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
             
         }
     }
-
+    
 }
 
 - (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
 {
+    if ([self.delegate respondsToSelector:@selector(dayPicker:scrollViewDidEndDecelerating:)]) {
+        [self.delegate dayPicker:self scrollViewDidEndDecelerating:scrollView];
+    }
+    
+    
     [self scrollViewDidFinishScrolling:scrollView];
 }
 - (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
+    if ([self.delegate respondsToSelector:@selector(dayPicker:scrollViewDidEndDragging:)]) {
+        [self.delegate dayPicker:self scrollViewDidEndDragging:scrollView];
+    }
+    
+    
     if(!decelerate) {
         [self scrollViewDidFinishScrolling:scrollView];
     }
     
 }
 
-- (void) scrollViewDidFinishScrolling: (UIScrollView*) scrollView {
+- (void)scrollViewDidFinishScrolling:(UIScrollView*)scrollView {
     CGPoint point = [self convertPoint:CGPointMake(self.frame.size.width/2.0, self.dayCellSize.height/2.0) toView:self.tableView];
     NSIndexPath* centerIndexPath = [self.tableView indexPathForRowAtPoint:point];
-        
+    
     if (centerIndexPath.row != self.currentIndex.row) {
         if ([self.delegate respondsToSelector:@selector(dayPicker:willSelectDay:)])
             [self.delegate dayPicker:self willSelectDay:self.tableDaysData[centerIndexPath.row]];
-    }
-    
-    if (centerIndexPath.row != self.currentIndex.row) {
         
         _currentDay = centerIndexPath.row-1;
         self.currentIndex = centerIndexPath;
     }
+    
 }
 
 #pragma mark - UITableView dataSource
@@ -448,23 +489,31 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         cell = [[MZDayPickerCell alloc] initWithSize:self.dayCellSize footerHeight:self.dayCellFooterHeight reuseIdentifier:reuseIdentifier];
     }
     
+    MZDay *day = self.tableDaysData[indexPath.row];
+    
+    // Bug: I can't use default UITableView select row, because in some case, row's didn't selected
+    // I Handled it by tap gesture recognizer
+    [cell setUserInteractionEnabled:NO];
+    
     cell.dayLabel.textColor = self.activeDayNameColor;
     cell.dayLabel.font = [cell.dayLabel.font fontWithSize:self.dayLabelFontSize];
     cell.dayNameLabel.font = [cell.dayLabel.font fontWithSize:self.dayNameLabelFontSize];
     cell.dayNameLabel.textColor = self.activeDayNameColor;
     [cell setBottomBorderColor:self.bottomBorderColor];
     
-    // Bug: I can't use default UITableView select row, because in some case, row's didn't selected
-    // I Handled it by tap gesture recognizer
-    [cell setUserInteractionEnabled:NO];
-    
-    MZDay *day = self.tableDaysData[indexPath.row];
-    
     cell.dayLabel.text = [NSString stringWithFormat:@"%@",day.day];
     cell.dayNameLabel.text = [NSString stringWithFormat:@"%@",day.name];
     
+    if ([self.dataSource respondsToSelector:@selector(dayPicker:titleForCellDayLabelInDay:)]) {
+        cell.dayLabel.text = [self.dataSource dayPicker:self titleForCellDayLabelInDay:day];
+    }
+    
+    if ([self.dataSource respondsToSelector:@selector(dayPicker:titleForCellDayNameLabelInDay:)]) {
+        cell.dayNameLabel.text = [self.dataSource dayPicker:self titleForCellDayNameLabelInDay:day];
+    }
+    
     [self setShadowForCell:cell];
-
+    
     if (indexPath.row == _currentIndex.row) {
         cell.containerView.backgroundColor = kDefaultColorBackground;
         cell.containerView.layer.shadowOpacity = 1.0;
@@ -494,7 +543,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 }
 
 - (void)setShadowForCell:(MZDayPickerCell *)cell
-{    
+{
     cell.containerView.layer.masksToBounds = NO;
     cell.containerView.layer.shadowOffset = kDefaultShadowCellOffset;
     cell.containerView.layer.shadowRadius = kDefaultShadowCellRadius;

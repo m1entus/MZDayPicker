@@ -18,9 +18,9 @@
 		062E333F1725A9A5009B699E /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 062E333E1725A9A5009B699E /* Default-568h@2x.png */; };
 		062E33421725A9A5009B699E /* MainStoryboard.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 062E33401725A9A5009B699E /* MainStoryboard.storyboard */; };
 		062E33451725A9A6009B699E /* MZViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E33441725A9A6009B699E /* MZViewController.m */; };
-		062E33521725A9DF009B699E /* MZDayPickerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E334C1725A9DF009B699E /* MZDayPickerCell.m */; };
-		062E33531725A9DF009B699E /* MZDayPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E334E1725A9DF009B699E /* MZDayPicker.m */; };
-		062E33541725A9DF009B699E /* MZDay.m in Sources */ = {isa = PBXBuildFile; fileRef = 062E334F1725A9DF009B699E /* MZDay.m */; };
+		D285CAD4172AA63D00452B91 /* MZDay.m in Sources */ = {isa = PBXBuildFile; fileRef = D285CACF172AA63D00452B91 /* MZDay.m */; };
+		D285CAD5172AA63D00452B91 /* MZDayPicker.m in Sources */ = {isa = PBXBuildFile; fileRef = D285CAD1172AA63D00452B91 /* MZDayPicker.m */; };
+		D285CAD6172AA63D00452B91 /* MZDayPickerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = D285CAD3172AA63D00452B91 /* MZDayPickerCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,12 +40,12 @@
 		062E33411725A9A5009B699E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/MainStoryboard.storyboard; sourceTree = "<group>"; };
 		062E33431725A9A5009B699E /* MZViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MZViewController.h; sourceTree = "<group>"; };
 		062E33441725A9A6009B699E /* MZViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MZViewController.m; sourceTree = "<group>"; };
-		062E334C1725A9DF009B699E /* MZDayPickerCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MZDayPickerCell.m; path = ../../../../WCDayPicker/MZDayPicker/MZDayPickerCell.m; sourceTree = "<group>"; };
-		062E334D1725A9DF009B699E /* MZDayPickerCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MZDayPickerCell.h; path = ../../../../WCDayPicker/MZDayPicker/MZDayPickerCell.h; sourceTree = "<group>"; };
-		062E334E1725A9DF009B699E /* MZDayPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MZDayPicker.m; path = ../../../../WCDayPicker/MZDayPicker/MZDayPicker.m; sourceTree = "<group>"; };
-		062E334F1725A9DF009B699E /* MZDay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MZDay.m; path = ../../../../WCDayPicker/MZDayPicker/MZDay.m; sourceTree = "<group>"; };
-		062E33501725A9DF009B699E /* MZDayPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MZDayPicker.h; path = ../../../../WCDayPicker/MZDayPicker/MZDayPicker.h; sourceTree = "<group>"; };
-		062E33511725A9DF009B699E /* MZDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MZDay.h; path = ../../../../WCDayPicker/MZDayPicker/MZDay.h; sourceTree = "<group>"; };
+		D285CACE172AA63D00452B91 /* MZDay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MZDay.h; path = ../../../MZDayPicker/MZDay.h; sourceTree = "<group>"; };
+		D285CACF172AA63D00452B91 /* MZDay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MZDay.m; path = ../../../MZDayPicker/MZDay.m; sourceTree = "<group>"; };
+		D285CAD0172AA63D00452B91 /* MZDayPicker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MZDayPicker.h; path = ../../../MZDayPicker/MZDayPicker.h; sourceTree = "<group>"; };
+		D285CAD1172AA63D00452B91 /* MZDayPicker.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MZDayPicker.m; path = ../../../MZDayPicker/MZDayPicker.m; sourceTree = "<group>"; };
+		D285CAD2172AA63D00452B91 /* MZDayPickerCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MZDayPickerCell.h; path = ../../../MZDayPicker/MZDayPickerCell.h; sourceTree = "<group>"; };
+		D285CAD3172AA63D00452B91 /* MZDayPickerCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MZDayPickerCell.m; path = ../../../MZDayPicker/MZDayPickerCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,12 +120,12 @@
 		062E334B1725A9CC009B699E /* MZDayPicker */ = {
 			isa = PBXGroup;
 			children = (
-				062E334D1725A9DF009B699E /* MZDayPickerCell.h */,
-				062E334C1725A9DF009B699E /* MZDayPickerCell.m */,
-				062E33501725A9DF009B699E /* MZDayPicker.h */,
-				062E334E1725A9DF009B699E /* MZDayPicker.m */,
-				062E33511725A9DF009B699E /* MZDay.h */,
-				062E334F1725A9DF009B699E /* MZDay.m */,
+				D285CACE172AA63D00452B91 /* MZDay.h */,
+				D285CACF172AA63D00452B91 /* MZDay.m */,
+				D285CAD0172AA63D00452B91 /* MZDayPicker.h */,
+				D285CAD1172AA63D00452B91 /* MZDayPicker.m */,
+				D285CAD2172AA63D00452B91 /* MZDayPickerCell.h */,
+				D285CAD3172AA63D00452B91 /* MZDayPickerCell.m */,
 			);
 			name = MZDayPicker;
 			sourceTree = "<group>";
@@ -200,9 +200,9 @@
 				062E33351725A9A5009B699E /* main.m in Sources */,
 				062E33391725A9A5009B699E /* MZAppDelegate.m in Sources */,
 				062E33451725A9A6009B699E /* MZViewController.m in Sources */,
-				062E33521725A9DF009B699E /* MZDayPickerCell.m in Sources */,
-				062E33531725A9DF009B699E /* MZDayPicker.m in Sources */,
-				062E33541725A9DF009B699E /* MZDay.m in Sources */,
+				D285CAD4172AA63D00452B91 /* MZDay.m in Sources */,
+				D285CAD5172AA63D00452B91 /* MZDayPicker.m in Sources */,
+				D285CAD6172AA63D00452B91 /* MZDayPickerCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,6 +290,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MZDayPickerExample/MZDayPickerExample-Prefix.pch";
 				INFOPLIST_FILE = "MZDayPickerExample/MZDayPickerExample-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -301,6 +302,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MZDayPickerExample/MZDayPickerExample-Prefix.pch";
 				INFOPLIST_FILE = "MZDayPickerExample/MZDayPickerExample-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};

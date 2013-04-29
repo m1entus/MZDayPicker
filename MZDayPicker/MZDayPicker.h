@@ -27,9 +27,21 @@
 #import "MZDay.h"
 
 @class MZDayPicker;
+@class MZDayPickerCell;
+
+@protocol MZDayPickerDataSource <NSObject>
+@optional
+- (NSString *)dayPicker:(MZDayPicker *)dayPicker titleForCellDayLabelInDay:(MZDay *)day;
+- (NSString *)dayPicker:(MZDayPicker *)dayPicker titleForCellDayNameLabelInDay:(MZDay *)day;
+
+@end
 
 @protocol MZDayPickerDelegate <NSObject>
 @optional
+- (void)dayPicker:(MZDayPicker *)dayPicker scrollViewDidScroll:(UIScrollView *)scrollView;
+- (void)dayPicker:(MZDayPicker *)dayPicker scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
+- (void)dayPicker:(MZDayPicker *)dayPicker scrollViewDidEndDragging:(UIScrollView *)scrollView;
+
 - (void)dayPicker:(MZDayPicker *)dayPicker willSelectDay:(MZDay *)day;
 - (void)dayPicker:(MZDayPicker *)dayPicker didSelectDay:(MZDay *)day;
 
@@ -62,13 +74,19 @@
 @property (nonatomic, readonly) NSInteger month;
 @property (nonatomic, readonly) NSInteger year;
 
-@property (nonatomic, weak) id <MZDayPickerDelegate> delegate;
+@property (nonatomic, weak) id<MZDayPickerDelegate> delegate;
+@property (nonatomic, weak) id<MZDayPickerDataSource> dataSource;
 
 - (id)initWithFrame:(CGRect)frame dayCellSize:(CGSize)cellSize dayCellFooterHeight:(CGFloat)footerHeight month:(NSInteger)month year:(NSInteger)year;
 - (id)initWithFrame:(CGRect)frame month:(NSInteger)month year:(NSInteger)year;
 
 // Set active days for current month
 - (void)setActiveDaysFrom:(NSInteger)fromDay toDay:(NSInteger)toDay;
+
+- (void)setCurrentDay:(NSInteger)currentDay animated:(BOOL)animated;
+
+- (void)reloadData;
+- (MZDayPickerCell *)cellForDay:(MZDay *)day;
 
 @end
 

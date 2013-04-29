@@ -26,6 +26,8 @@
 #import <Foundation/Foundation.h>
 
 @interface MZDay : NSObject
+@property (nonatomic,strong) NSDate *date;
+
 @property (nonatomic,strong) NSNumber *day;
 @property (nonatomic,strong) NSNumber *month;
 @property (nonatomic,strong) NSNumber *year;
