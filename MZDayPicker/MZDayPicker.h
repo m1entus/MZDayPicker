@@ -49,12 +49,21 @@
 
 @interface MZDayPicker : UIView
 
-/* Customization optional (optional) */
+/* 
+ * Font colors (optional)
+ */
 @property (nonatomic, strong) UIColor *activeDayColor;
 @property (nonatomic, strong) UIColor *activeDayNameColor;
 @property (nonatomic, strong) UIColor *inactiveDayColor;
 
+/*
+ * Picker background color (optional)
+ */
 @property (nonatomic, strong) UIColor *backgroundPickerColor;
+
+/*
+ * Property for cell footer color (optional)
+ */
 @property (nonatomic, strong) UIColor *bottomBorderColor;
 
 /* Day number and name font size (optional) */
@@ -67,26 +76,47 @@
 @property (nonatomic, readonly) CGSize dayCellSize;
 @property (nonatomic, readonly) CGFloat dayCellFooterHeight;
 
+/*
+ * If you want to set activeDay range, use method: setActiveDaysFrom:toDay: 
+ */
 @property (nonatomic, readonly) NSRange activeDays;
 
-@property (nonatomic, assign) NSInteger currentDay;
-
+/*
+ * Property for current month, year, day
+ */
 @property (nonatomic, assign) NSInteger month;
 @property (nonatomic, assign) NSInteger year;
+@property (nonatomic, assign) NSInteger currentDay;
 
 @property (nonatomic, weak) id<MZDayPickerDelegate> delegate;
 @property (nonatomic, weak) id<MZDayPickerDataSource> dataSource;
 
-- (id)initWithFrame:(CGRect)frame dayCellSize:(CGSize)cellSize dayCellFooterHeight:(CGFloat)footerHeight;
-- (id)initWithFrame:(CGRect)frame dayCellSize:(CGSize)cellSize dayCellFooterHeight:(CGFloat)footerHeight month:(NSInteger)month year:(NSInteger)year;
-- (id)initWithFrame:(CGRect)frame month:(NSInteger)month year:(NSInteger)year;
+/*
+ * Initializers
+ * MZDayPicker supports storyboard
+ */
+- (instancetype)initWithFrame:(CGRect)frame dayCellSize:(CGSize)cellSize dayCellFooterHeight:(CGFloat)footerHeight;
+- (instancetype)initWithFrame:(CGRect)frame dayCellSize:(CGSize)cellSize dayCellFooterHeight:(CGFloat)footerHeight month:(NSInteger)month year:(NSInteger)year;
+- (instancetype)initWithFrame:(CGRect)frame month:(NSInteger)month year:(NSInteger)year;
 
-// Set active days for current month
+/*
+ * Setter for active days range
+ */
 - (void)setActiveDaysFrom:(NSInteger)fromDay toDay:(NSInteger)toDay;
 
+/*
+ * Setter for currentDay
+ */
 - (void)setCurrentDay:(NSInteger)currentDay animated:(BOOL)animated;
 
+/*
+ * Reload dataSource and setup scrollview content
+ */
 - (void)reloadData;
+
+/*
+ * Cell for MZDay object
+ */
 - (MZDayPickerCell *)cellForDay:(MZDay *)day;
 
 @end

@@ -8,20 +8,27 @@ An iOS day picker to allow users to select date
 
 ## How To Use
 
-Just add MZDayPicker library files to your project and declare MZDayPicker in your controller to conform to the MZDayPicker delegate to recieve callbacks
+Just add MZDayPicker library files to your project and setup MZDayPicker in storyboard and IBOutlet to your controller to conform to the MZDayPicker delegate to recieve callbacks
+
+``` objective-c
+@property (weak, nonatomic) IBOutlet MZDayPicker *dayPicker;
+```
 
 ``` objective-c
 - (void)viewDidLoad
 {
     [super viewDidLoad];
 
-	MZDayPicker *scroll = [[MZDayPicker alloc] initWithFrame:self.view.bounds dayCellSize:CGSizeMake(64, 64) dayCellFooterHeight:4 month:9 year:2013];
+	self.dayPicker.month = 9;
+    self.dayPicker.year = 2013;
 
-    scroll.delegate = self;
-    scroll.currentDay = 15;
-    [scroll setActiveDaysFrom:5 toDay:20];
+    self.dayPicker.delegate = self;
+    
+    self.dayPicker.dayNameLabelFontSize = 7.0f;
+    self.dayPicker.dayLabelFontSize = 15.0f;
+    [self.dayPicker setActiveDaysFrom:1 toDay:30];
 
-    [self.view addSubview:scroll];
+    [self.dayPicker setCurrentDay:15 animated:NO];
 }
 ```
 Implement the optional delegate method to be notified when a new day item is selected
@@ -43,16 +50,47 @@ Implement the optional delegate method to be notified when a new day item is sel
 
 ```
 
+## Delegates
+
+``` objective-c
+@protocol MZDayPickerDataSource <NSObject>
+@optional
+- (NSString *)dayPicker:(MZDayPicker *)dayPicker titleForCellDayLabelInDay:(MZDay *)day;
+- (NSString *)dayPicker:(MZDayPicker *)dayPicker titleForCellDayNameLabelInDay:(MZDay *)day;
+
+@end
+
+@protocol MZDayPickerDelegate <NSObject>
+@optional
+- (void)dayPicker:(MZDayPicker *)dayPicker scrollViewDidScroll:(UIScrollView *)scrollView;
+- (void)dayPicker:(MZDayPicker *)dayPicker scrollViewDidEndDecelerating:(UIScrollView *)scrollView;
+- (void)dayPicker:(MZDayPicker *)dayPicker scrollViewDidEndDragging:(UIScrollView *)scrollView;
+
+- (void)dayPicker:(MZDayPicker *)dayPicker willSelectDay:(MZDay *)day;
+- (void)dayPicker:(MZDayPicker *)dayPicker didSelectDay:(MZDay *)day;
+
+@end
+```
+
 ## Appearance configuration
 
 ``` objective-c
 
-/* Customization optional (optional) */
+/* 
+ * Font colors (optional)
+ */
 @property (nonatomic, strong) UIColor *activeDayColor;
 @property (nonatomic, strong) UIColor *activeDayNameColor;
 @property (nonatomic, strong) UIColor *inactiveDayColor;
 
+/*
+ * Picker background color (optional)
+ */
 @property (nonatomic, strong) UIColor *backgroundPickerColor;
+
+/*
+ * Property for cell footer color (optional)
+ */
 @property (nonatomic, strong) UIColor *bottomBorderColor;
 
 /* Day number and name font size (optional) */
@@ -62,11 +100,18 @@ Implement the optional delegate method to be notified when a new day item is sel
 /* Day number zoom scale (optional) */
 @property (nonatomic, assign) CGFloat dayLabelZoomScale;
 
+@property (nonatomic, readonly) CGSize dayCellSize;
+@property (nonatomic, readonly) CGFloat dayCellFooterHeight;
+
 ```
 
 ## Requirements
 
 MZDayPicker requires either iOS 5.x and above.
+
+## Storyboard
+
+MZDayPicker supports storyboard.
 
 ## ARC
 

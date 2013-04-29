@@ -13,12 +13,12 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" id="wq9-gv-J5E" customClass="MZDayPicker">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="62"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="61"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             </view>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="RuF-w6-g5G">
-                                <rect key="frame" x="0.0" y="70" width="320" height="390"/>
+                                <rect key="frame" x="0.0" y="93" width="320" height="367"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -53,7 +53,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <connections>
-                        <outlet property="scroll" destination="wq9-gv-J5E" id="tDw-S7-sP4"/>
+                        <outlet property="dayPicker" destination="wq9-gv-J5E" id="77i-pT-1qX"/>
                         <outlet property="tableView" destination="RuF-w6-g5G" id="xFA-El-7fQ"/>
                     </connections>
                 </viewController>
@@ -68,7 +68,7 @@
         <class className="MZViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/MZViewController.h"/>
             <relationships>
-                <relationship kind="outlet" name="scroll" candidateClass="MZDayPicker"/>
+                <relationship kind="outlet" name="dayPicker" candidateClass="MZDayPicker"/>
                 <relationship kind="outlet" name="tableView" candidateClass="UITableView"/>
             </relationships>
         </class>

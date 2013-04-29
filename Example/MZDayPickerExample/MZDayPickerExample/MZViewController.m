@@ -24,27 +24,18 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     
-	self.scroll.month = 9;
-    self.scroll.year = 2013;
+	self.dayPicker.month = 9;
+    self.dayPicker.year = 2013;
 
-    self.scroll.delegate = self;
+    self.dayPicker.delegate = self;
     
-    //    scroll.dayNameLabelFontSize = 7.0f;
-    //    scroll.dayLabelFontSize = 15.0f;
-    [self.scroll setActiveDaysFrom:5 toDay:20];
+//    self.dayPicker.dayNameLabelFontSize = 7.0f;
+//    self.dayPicker.dayLabelFontSize = 15.0f;
+    [self.dayPicker setActiveDaysFrom:1 toDay:30];
 
-    [self.scroll setCurrentDay:14 animated:NO];
-    
-    
-    
-    [self.view addSubview:self.scroll];
-    
-    /*
-     * If you want to change y coordinate you need to do this in code for example:
-     * self.scroll.frame = CGRectMake(0, 60, 320, self.scroll.frame.size.height);
-     */
+    [self.dayPicker setCurrentDay:15 animated:NO];
 
-    self.tableView.frame = CGRectMake(0, self.scroll.frame.origin.y + self.scroll.frame.size.height, self.tableView.frame.size.width, self.view.bounds.size.height-self.scroll.frame.size.height);
+    self.tableView.frame = CGRectMake(0, self.dayPicker.frame.origin.y + self.dayPicker.frame.size.height, self.tableView.frame.size.width, self.view.bounds.size.height-self.dayPicker.frame.size.height);
     
 }
 
@@ -100,7 +91,7 @@
 
 - (void)viewDidUnload {
     [self setTableView:nil];
-    [self setScroll:nil];
+    [self setDayPicker:nil];
     [super viewDidUnload];
 }
 @end

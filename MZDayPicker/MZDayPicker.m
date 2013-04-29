@@ -138,25 +138,20 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 
 - (void)setCurrentDay:(NSInteger)currentDay animated:(BOOL)animated
 {
-    if (_currentDay != currentDay) {
-        _currentDay = currentDay;
-        
-        _currentIndex = [NSIndexPath indexPathForRow:currentDay+kDefaultInitialInactiveDays-1 inSection:0];
-        
-        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:_currentIndex];
-        
-        if (cell) {
-            CGFloat contentOffset = cell.center.y - (self.tableView.frame.size.width/2);
-            
-            [self.tableView setContentOffset:CGPointMake(self.tableView.contentOffset.x, contentOffset) animated:animated];
-        } else {
-            
-            CGFloat contentSizeLimit = (kDefaultInitialInactiveDays*self.dayCellSize.width) + (kDefaultInitialInactiveDays/2*self.dayCellSize.width) + ((currentDay-kDefaultInitialInactiveDays-1)*self.dayCellSize.width) + (self.frame.size.width/2) - (self.dayCellSize.width/2) ;
-            
-            [self.tableView setContentOffset:CGPointMake(self.tableView.contentOffset.x, contentSizeLimit) animated:animated];
-        }
-        
-    }
+    _currentDay = currentDay;
+    
+    _currentIndex = [NSIndexPath indexPathForRow:currentDay+kDefaultInitialInactiveDays-1 inSection:0];
+
+    // Hack: UITableView have bug, if i change conentInset scrolling to position not working properly
+    // It is used only here, in other place i callculate contentOffset manually
+    self.tableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
+    
+    [self.tableView scrollToRowAtIndexPath:_currentIndex
+                          atScrollPosition:UITableViewScrollPositionMiddle
+                                  animated:animated];
+    
+    [self setupTableViewContent];
+
 }
 
 - (void)setCurrentDay:(NSInteger)currentDay
@@ -210,7 +205,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     [super setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, self.dayCellSize.height+self.dayCellFooterHeight)];
 }
 
-- (id)initWithFrame:(CGRect)frame
+- (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
         
@@ -259,22 +254,19 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     return self;
 }
 
-- (id)initWithCoder:(NSCoder *)aDecoder
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super initWithCoder:aDecoder]) {
         
         self =  [self initWithFrame:CGRectMake(0, 0, self.initialFrame.size.width, self.initialFrame.size.height) dayCellSize:CGSizeMake(self.initialFrame.size.height-kDefaultCellFooterHeight, self.initialFrame.size.height-kDefaultCellFooterHeight) dayCellFooterHeight:kDefaultCellFooterHeight month:1 year:1970];
-        
-        // Somethime cell is not in center (depend on size), this code correct it
-        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:_currentIndex];
-        CGFloat contentOffset = cell.center.y - (self.tableView.frame.size.width/2);
-        [self.tableView setContentOffset:CGPointMake(self.tableView.contentOffset.x, contentOffset) animated:NO];
+
+        self.frame = CGRectMake(self.initialFrame.origin.x, self.initialFrame.origin.y, self.frame.size.width, self.frame.size.height);
     }
     
     return self;
 }
 
-- (id)initWithFrame:(CGRect)frame dayCellSize:(CGSize)cellSize dayCellFooterHeight:(CGFloat)footerHeight
+- (instancetype)initWithFrame:(CGRect)frame dayCellSize:(CGSize)cellSize dayCellFooterHeight:(CGFloat)footerHeight
 {
     if (self = [self initWithFrame:frame dayCellSize:CGSizeMake(kDefaultCellWidth, kDefaultCellHeight) dayCellFooterHeight:kDefaultCellFooterHeight month:1 year:1970]) {
         
@@ -282,7 +274,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     return self;
 }
 
-- (id)initWithFrame:(CGRect)frame month:(NSInteger)month year:(NSInteger)year
+- (instancetype)initWithFrame:(CGRect)frame month:(NSInteger)month year:(NSInteger)year
 {
     if (self = [self initWithFrame:frame dayCellSize:CGSizeMake(kDefaultCellWidth, kDefaultCellHeight) dayCellFooterHeight:kDefaultCellFooterHeight month:month year:year]) {
         
@@ -290,7 +282,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     return self;
 }
 
-- (id)initWithFrame:(CGRect)frame dayCellSize:(CGSize)cellSize dayCellFooterHeight:(CGFloat)footerHeight month:(NSInteger)month year:(NSInteger)year
+- (instancetype)initWithFrame:(CGRect)frame dayCellSize:(CGSize)cellSize dayCellFooterHeight:(CGFloat)footerHeight month:(NSInteger)month year:(NSInteger)year
 {
     _dayCellSize = cellSize;
     _dayCellFooterHeight = footerHeight;
@@ -487,7 +479,6 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         [self.delegate dayPicker:self scrollViewDidEndDragging:scrollView];
     }
     
-    
     if(!decelerate) {
         [self scrollViewDidFinishScrolling:scrollView];
     }
@@ -504,7 +495,16 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         
         _currentDay = centerIndexPath.row-1;
         self.currentIndex = centerIndexPath;
+        
+    } else {
+        // Go back to currentIndex
+        UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:_currentIndex];
+        
+        CGFloat contentOffset = cell.center.y - (self.tableView.frame.size.width/2);
+        
+        [self.tableView setContentOffset:CGPointMake(self.tableView.contentOffset.x, contentOffset) animated:YES];
     }
+
     
 }
 
@@ -527,7 +527,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString* reuseIdentifier = @"HorizontalCell";
+    static NSString* reuseIdentifier = @"MZDayPickerCell";
     
     MZDayPickerCell *cell = [tableView dequeueReusableCellWithIdentifier:reuseIdentifier];
     

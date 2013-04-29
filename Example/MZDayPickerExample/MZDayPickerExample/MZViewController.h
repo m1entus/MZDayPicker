@@ -11,6 +11,6 @@
 
 @interface MZViewController : UIViewController
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet MZDayPicker *scroll;
+@property (weak, nonatomic) IBOutlet MZDayPicker *dayPicker;
 
 @end
