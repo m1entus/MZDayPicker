@@ -29,8 +29,8 @@
 
     self.dayPicker.delegate = self;
     
-//    self.dayPicker.dayNameLabelFontSize = 7.0f;
-//    self.dayPicker.dayLabelFontSize = 15.0f;
+    self.dayPicker.dayNameLabelFontSize = 12.0f;
+    self.dayPicker.dayLabelFontSize = 18.0f;
     [self.dayPicker setActiveDaysFrom:1 toDay:30];
 
     [self.dayPicker setCurrentDay:15 animated:NO];

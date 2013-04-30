@@ -54,6 +54,7 @@ NSInteger const kDefaultFinalInactiveDays = 8;
 #define kDefaultColorDayName [UIColor colorWithRed:0.55f green:0.04f blue:0.04f alpha:1.00f]
 #define kDefaultColorBottomBorder [UIColor colorWithRed:0.22f green:0.57f blue:0.80f alpha:1.00f]
 
+
 static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     
     if (row <= range.location+range.length  && row >= range.location ) {
@@ -202,7 +203,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 {
     if (CGRectIsEmpty(self.initialFrame)) self.initialFrame = frame;
     
-    [super setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, self.dayCellSize.height+self.dayCellFooterHeight)];
+    [super setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -221,7 +222,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         [self setActiveDaysFrom:1 toDay:[self.numberOfDaysInCurrentMonth integerValue]-1];
         
         // Make the UITableView's height the width, and width the height so that when we rotate it it will fit exactly
-        self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.height, self.frame.size.width)];
+        self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.height, frame.size.width)];
         self.tableView.delegate = self;
         self.tableView.dataSource = self;
         
@@ -257,12 +258,17 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super initWithCoder:aDecoder]) {
-        
+
         self =  [self initWithFrame:CGRectMake(0, 0, self.initialFrame.size.width, self.initialFrame.size.height) dayCellSize:CGSizeMake(self.initialFrame.size.height-kDefaultCellFooterHeight, self.initialFrame.size.height-kDefaultCellFooterHeight) dayCellFooterHeight:kDefaultCellFooterHeight month:1 year:1970];
 
-        self.frame = CGRectMake(self.initialFrame.origin.x, self.initialFrame.origin.y, self.frame.size.width, self.frame.size.height);
+        if ([[UIDevice currentDevice].systemVersion floatValue] >= 6.0) {
+            self.frame = CGRectMake(self.initialFrame.origin.x, 0, self.frame.size.width, self.initialFrame.origin.y+self.frame.size.height+self.dayCellFooterHeight);
+        } else {
+            self.frame = CGRectMake(self.initialFrame.origin.x, self.initialFrame.origin.y, self.frame.size.width, self.initialFrame.size.height+self.dayCellFooterHeight);
+        }
+        
     }
-    
+
     return self;
 }
 
@@ -295,7 +301,6 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         [self fillTableData];
         
         self.currentDay = 14;
-        
     }
     
     return self;
@@ -487,7 +492,8 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 
 - (void)scrollViewDidFinishScrolling:(UIScrollView*)scrollView {
     CGPoint point = [self convertPoint:CGPointMake(self.frame.size.width/2.0, self.dayCellSize.height/2.0) toView:self.tableView];
-    NSIndexPath* centerIndexPath = [self.tableView indexPathForRowAtPoint:point];
+    
+    NSIndexPath* centerIndexPath = [self.tableView indexPathForRowAtPoint:CGPointMake(0, point.y)];
     
     if (centerIndexPath.row != self.currentIndex.row) {
         if ([self.delegate respondsToSelector:@selector(dayPicker:willSelectDay:)])
