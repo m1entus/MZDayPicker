@@ -87,6 +87,7 @@
 @property (nonatomic, assign) NSInteger month;
 @property (nonatomic, assign) NSInteger year;
 @property (nonatomic, assign) NSInteger currentDay;
+@property (nonatomic, strong) NSDate *currentDate;
 
 @property (nonatomic, weak) id<MZDayPickerDelegate> delegate;
 @property (nonatomic, weak) id<MZDayPickerDataSource> dataSource;
@@ -105,9 +106,19 @@
 - (void)setActiveDaysFrom:(NSInteger)fromDay toDay:(NSInteger)toDay;
 
 /*
+ * Set picker date range
+ */
+- (void)setStartDate:(NSDate *)date endDate:(NSDate *)endDate;
+
+/*
  * Setter for currentDay
  */
 - (void)setCurrentDay:(NSInteger)currentDay animated:(BOOL)animated;
+
+/*
+ * Setter for currentDate
+ */
+- (void)setCurrentDate:(NSDate *)date animated:(BOOL)animated;
 
 /*
  * Reload dataSource and setup scrollview content
@@ -119,5 +130,10 @@
  */
 - (MZDayPickerCell *)cellForDay:(MZDay *)day;
 
+@end
+
+@interface NSDate (Additional)
++ (NSDate *)dateFromDay:(NSInteger)day month:(NSInteger)month year:(NSInteger)year;
+- (NSUInteger)numberOfDaysInMonth;
 @end
 

@@ -64,12 +64,6 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     return NO;
 }
 
-@interface NSDate (Additional)
-+ (NSDate *)dateFromDay:(NSInteger)day month:(NSInteger)month year:(NSInteger)year;
-- (NSUInteger)numberOfDaysInMonth;
-@end
-
-
 @interface MZDayPicker () <UITableViewDelegate, UITableViewDataSource>
 
 // initialFrame property is a hack for initWithCoder:
@@ -158,6 +152,38 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 - (void)setCurrentDay:(NSInteger)currentDay
 {
     [self setCurrentDay:currentDay animated:NO];
+}
+
+- (void)setCurrentDate:(NSDate *)date animated:(BOOL)animated
+{
+    NSInteger components = (NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit);
+    
+    NSDateComponents *componentsFromDate = [[NSCalendar currentCalendar] components:components
+                                                                        fromDate:date];
+    
+    [self.tableDaysData enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        MZDay *day = obj;
+        
+        NSDateComponents *componentsFromDayDate = [[NSCalendar currentCalendar] components:components
+                                                                                  fromDate: day.date];
+        
+        NSDate *searchingDate = [[NSCalendar currentCalendar] dateFromComponents:componentsFromDate];
+        NSDate *dayDate = [[NSCalendar currentCalendar] dateFromComponents:componentsFromDayDate];
+        
+        NSComparisonResult result = [searchingDate compare:dayDate];
+        
+        if (result == NSOrderedSame) {
+            _currentDate = date;
+            [self setCurrentDay:idx-kDefaultInitialInactiveDays+1 animated:animated];
+            *stop = YES;
+        }
+    }];
+    
+}
+
+- (void)setCurrentDate:(NSDate *)date
+{
+    [self setCurrentDate:date animated:NO];
 }
 
 
@@ -322,6 +348,64 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     
 }
 
+- (void)setStartDate:(NSDate *)startDate endDate:(NSDate *)endDate
+{
+    NSMutableArray *tableData = [NSMutableArray array];
+    
+    NSDateFormatter *dateNameFormatter = [[NSDateFormatter alloc] init];
+    [dateNameFormatter setDateFormat:@"EEEE"];
+    
+    NSDateFormatter *dateNumberFormatter = [[NSDateFormatter alloc] init];
+    [dateNumberFormatter setDateFormat:@"dd"];
+    
+    for (int i = kDefaultInitialInactiveDays; i >= 1; i--) {
+        NSDate *date = [startDate dateByAddingTimeInterval:-(i * 60.0 * 60.0 * 24.0)];
+        
+        NSDate *middleDay = [date dateByAddingTimeInterval:(60.0 * 60.0 * 12.0)];
+        
+        MZDay *newDay = [[MZDay alloc] init];
+        newDay.day = @([[dateNumberFormatter stringFromDate:middleDay] integerValue]);
+        newDay.name = [dateNameFormatter stringFromDate:middleDay];
+        newDay.date = middleDay;
+        
+        [tableData addObject:newDay];
+    }
+    
+    NSInteger numberOfActiveDays = 0;
+    
+    for (NSDate *date = startDate; [date compare: endDate] <= 0; date = [date dateByAddingTimeInterval:24 * 60 * 60] ) {
+        NSDate *middleDay = [date dateByAddingTimeInterval:(60.0 * 60.0 * 12.0)];
+        
+        MZDay *newDay = [[MZDay alloc] init];
+        newDay.day = @([[dateNumberFormatter stringFromDate:middleDay] integerValue]);
+        newDay.name = [dateNameFormatter stringFromDate:middleDay];
+        newDay.date = middleDay;
+        
+        [tableData addObject:newDay];
+        
+        numberOfActiveDays++;
+    }
+    
+    for (int i = 1; i <= kDefaultFinalInactiveDays; i++) {
+        NSDate *date = [endDate dateByAddingTimeInterval:(i * 60.0 * 60.0 * 24.0)];
+        
+        NSDate *middleDay = [date dateByAddingTimeInterval:(60.0 * 60.0 * 12.0)];
+        
+        MZDay *newDay = [[MZDay alloc] init];
+        newDay.day = @([[dateNumberFormatter stringFromDate:middleDay] integerValue]);
+        newDay.name = [dateNameFormatter stringFromDate:middleDay];
+        newDay.date = middleDay;
+        
+        [tableData addObject:newDay];
+    }
+    
+    self.tableDaysData = [tableData copy];
+    
+    [self setActiveDaysFrom:1 toDay:numberOfActiveDays];
+    
+    [self.tableView reloadData];
+}
+
 - (void)fillTableData
 {
     NSMutableArray *tableDaysData = [[NSMutableArray alloc] init];
@@ -414,6 +498,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
                     [self.delegate dayPicker:self willSelectDay:self.tableDaysData[indexPath.row]];
                 
                 _currentDay = indexPath.row-1;
+                _currentDate = [(MZDay *)self.tableDaysData[indexPath.row] date];
                 [self setCurrentIndex:indexPath];
             }
         }
@@ -500,6 +585,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
             [self.delegate dayPicker:self willSelectDay:self.tableDaysData[centerIndexPath.row]];
         
         _currentDay = centerIndexPath.row-1;
+        _currentDate = [(MZDay *)self.tableDaysData[centerIndexPath.row] date];
         self.currentIndex = centerIndexPath;
         
     } else {
