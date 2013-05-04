@@ -104,6 +104,22 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     }
 }
 
+- (void)setStartDate:(NSDate *)startDate
+{
+    if (self.endDate) 
+        [self setStartDate:startDate endDate:self.endDate];
+     else 
+        [self setStartDate:startDate endDate:[startDate dateByAddingTimeInterval:3600*24]];
+}
+
+- (void)setEndDate:(NSDate *)endDate
+{
+    if (self.startDate)
+        [self setStartDate:self.startDate endDate:endDate];
+    else
+        [self setStartDate:[endDate dateByAddingTimeInterval:-3600*24] endDate:endDate];
+}
+
 - (void)setDayLabelFontSize:(CGFloat)dayLabelFontSize
 {
     _dayLabelFontSize = dayLabelFontSize;
@@ -341,6 +357,9 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 
 - (void)setStartDate:(NSDate *)startDate endDate:(NSDate *)endDate
 {
+    _startDate = startDate;
+    _endDate = endDate;
+    
     NSMutableArray *tableData = [NSMutableArray array];
     
     NSDateFormatter *dateNameFormatter = [[NSDateFormatter alloc] init];

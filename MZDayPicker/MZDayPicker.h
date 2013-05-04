@@ -87,6 +87,9 @@
 @property (nonatomic, assign) NSInteger month;
 @property (nonatomic, assign) NSInteger year;
 @property (nonatomic, assign) NSInteger currentDay;
+
+@property (nonatomic, strong) NSDate *startDate;
+@property (nonatomic, strong) NSDate *endDate;
 @property (nonatomic, strong) NSDate *currentDate;
 
 @property (nonatomic, weak) id<MZDayPickerDelegate> delegate;
