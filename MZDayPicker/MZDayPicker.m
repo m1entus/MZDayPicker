@@ -77,7 +77,6 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 @property (nonatomic, assign) NSRange activeDays;
 
 @property (nonatomic, strong) UITableView* tableView;
-@property (nonatomic, strong) NSNumber *numberOfDaysInCurrentMonth;
 
 @property (nonatomic, strong) NSArray *tableDaysData;
 @end
@@ -90,7 +89,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     if (_month != month) {
         _month = month;
         
-        [self fillTableData];
+        [self fillTableDataWithCurrentMonth];
         [self setupTableViewContent];
     }
 }
@@ -100,7 +99,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     if (_year != year) {
         _year = year;
         
-        [self fillTableData];
+        [self fillTableDataWithCurrentMonth];
         [self setupTableViewContent];
     }
 }
@@ -217,14 +216,6 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     [self setupTableViewContent];
 }
 
-- (NSNumber *)numberOfDaysInCurrentMonth
-{
-    if (!_numberOfDaysInCurrentMonth) {
-        _numberOfDaysInCurrentMonth = @([[NSDate dateFromDay:1 month:self.month year:self.year] numberOfDaysInMonth]);
-    }
-    return _numberOfDaysInCurrentMonth;
-}
-
 - (void)setFrame:(CGRect)frame
 {
     if (CGRectIsEmpty(self.initialFrame)) self.initialFrame = frame;
@@ -245,7 +236,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         _dayLabelFontSize = kDefaultDayLabelFontSize;
         _dayNameLabelFontSize = kDefaultDayNameLabelFontSize;
         
-        [self setActiveDaysFrom:1 toDay:[self.numberOfDaysInCurrentMonth integerValue]-1];
+        [self setActiveDaysFrom:1 toDay:[NSDate dateFromDay:1 month:self.month year:self.year].numberOfDaysInMonth-1];
         
         // Make the UITableView's height the width, and width the height so that when we rotate it it will fit exactly
         self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.height, frame.size.width)];
@@ -324,7 +315,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         _month = month;
         _year = year;
         
-        [self fillTableData];
+        [self fillTableDataWithCurrentMonth];
         
         self.currentDay = 14;
     }
@@ -406,79 +397,12 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     [self.tableView reloadData];
 }
 
-- (void)fillTableData
+- (void)fillTableDataWithCurrentMonth
 {
-    NSMutableArray *tableDaysData = [[NSMutableArray alloc] init];
+    NSDate *startDate = [NSDate dateFromDay:1 month:self.month year:self.year];
+    NSDate *endDate = [NSDate dateFromDay:startDate.numberOfDaysInMonth-1 month:self.month year:self.year];
     
-    NSCalendar *calendar = [NSCalendar currentCalendar];
-    NSDateComponents *components = [[NSDateComponents alloc] init];
-    
-    NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"EEEE"];
-    
-    [components setMonth:self.month-1];
-    [components setYear:self.year];
-    
-    NSInteger numberOfDaysInPreviousMonth = [[NSDate dateFromDay:1 month:self.month-1 year:self.year] numberOfDaysInMonth];
-    
-    for (int i = numberOfDaysInPreviousMonth - kDefaultInitialInactiveDays + 1; i <= numberOfDaysInPreviousMonth ; i++) {
-        
-        [components setDay:i];
-        NSDate *dateForDay = [calendar dateFromComponents:components];
-        [dateForDay dateByAddingTimeInterval:(60.0 * 60.0 * 12.0)];// Push to Middle of day.
-        
-        MZDay *newDay = [[MZDay alloc] init];
-        newDay.day = @(i);
-        newDay.name = [dateFormatter stringFromDate:dateForDay];
-        newDay.date = dateForDay;
-        
-        [tableDaysData addObject:newDay];
-    }
-    
-    [components setMonth:self.month];
-    [components setYear:self.year];
-    
-    for (int i = 1; i <= [self.numberOfDaysInCurrentMonth integerValue]-1; i++) {
-        [components setDay:i];
-        NSDate *dateForDay = [calendar dateFromComponents:components];
-        [dateForDay dateByAddingTimeInterval:(60.0 * 60.0 * 12.0)];// Push to Middle of day.
-        
-        MZDay *newDay = [[MZDay alloc] init];
-        newDay.day = @(i);
-        newDay.name = [dateFormatter stringFromDate:dateForDay];
-        newDay.month = @(self.month);
-        newDay.year = @(self.year);
-        
-        newDay.date = dateForDay;
-        
-        [tableDaysData addObject:newDay];
-    }
-    
-    if (self.month+1 >= 13) {
-        [components setMonth:self.month-12];
-        [components setYear:self.year+1];
-    } else {
-        [components setMonth:self.month+1];
-        [components setYear:self.year];
-    }
-    
-    for (int i= 1; i <= kDefaultFinalInactiveDays ; i++) {
-        [components setDay:i];
-        NSDate *dateForDay = [calendar dateFromComponents:components];
-        [dateForDay dateByAddingTimeInterval:(60.0 * 60.0 * 12.0)];// Push to Middle of day.
-        
-        MZDay *newDay = [[MZDay alloc] init];
-        newDay.day = @(i);
-        newDay.name = [dateFormatter stringFromDate:dateForDay];
-        newDay.date = dateForDay;
-        
-        [tableDaysData addObject:newDay];
-    }
-    
-    self.tableDaysData = [tableDaysData copy];
-    
-    [self.tableView reloadData];
-    
+    [self setStartDate:startDate endDate:endDate];
 }
 
 #pragma mark - UITapGestureRecognizer

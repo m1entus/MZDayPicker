@@ -14,6 +14,8 @@ Just add MZDayPicker library files to your project and setup MZDayPicker in stor
 @property (weak, nonatomic) IBOutlet MZDayPicker *dayPicker;
 ```
 
+You can setup picker using current month:
+
 ``` objective-c
 - (void)viewDidLoad
 {
@@ -31,6 +33,21 @@ Just add MZDayPicker library files to your project and setup MZDayPicker in stor
     [self.dayPicker setCurrentDay:15 animated:NO];
 }
 ```
+You can also setup start and end date range:
+
+``` objective-c
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+
+    ...
+
+    [self.dayPicker setStartDate:[NSDate dateFromDay:28 month:9 year:2013] endDate:[NSDate dateFromDay:5 month:10 year:2013]];
+    
+    [self.dayPicker setCurrentDate:[NSDate dateFromDay:3 month:10 year:2013] animated:NO];
+}
+```
+
 Implement the optional delegate method to be notified when a new day item is selected
 
 ``` objective-c
