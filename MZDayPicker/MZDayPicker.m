@@ -171,29 +171,31 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 
 - (void)setCurrentDate:(NSDate *)date animated:(BOOL)animated
 {
-    NSInteger components = (NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit);
-    
-    NSDateComponents *componentsFromDate = [[NSCalendar currentCalendar] components:components
-                                                                        fromDate:date];
-    
-    [self.tableDaysData enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        MZDay *day = obj;
+    if (date) {
+        NSInteger components = (NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit);
         
-        NSDateComponents *componentsFromDayDate = [[NSCalendar currentCalendar] components:components
-                                                                                  fromDate: day.date];
+        NSDateComponents *componentsFromDate = [[NSCalendar currentCalendar] components:components
+                                                                               fromDate:date];
         
-        NSDate *searchingDate = [[NSCalendar currentCalendar] dateFromComponents:componentsFromDate];
-        NSDate *dayDate = [[NSCalendar currentCalendar] dateFromComponents:componentsFromDayDate];
-        
-        NSComparisonResult result = [searchingDate compare:dayDate];
-        
-        if (result == NSOrderedSame) {
-            _currentDate = date;
-            [self setCurrentDay:idx-kDefaultInitialInactiveDays+1 animated:animated];
-            *stop = YES;
-        }
-    }];
-    
+        [self.tableDaysData enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+            MZDay *day = obj;
+            
+            NSDateComponents *componentsFromDayDate = [[NSCalendar currentCalendar] components:components
+                                                                                      fromDate: day.date];
+            
+            NSDate *searchingDate = [[NSCalendar currentCalendar] dateFromComponents:componentsFromDate];
+            NSDate *dayDate = [[NSCalendar currentCalendar] dateFromComponents:componentsFromDayDate];
+            
+            NSComparisonResult result = [searchingDate compare:dayDate];
+            
+            if (result == NSOrderedSame) {
+                _currentDate = date;
+                [self setCurrentDay:idx-kDefaultInitialInactiveDays+1 animated:animated];
+                *stop = YES;
+            }
+        }];
+    }
+
 }
 
 - (void)setCurrentDate:(NSDate *)date
@@ -258,6 +260,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.height, frame.size.width)];
         self.tableView.delegate = self;
         self.tableView.dataSource = self;
+        self.tableView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
         
         // Rotate the tableview by 90 degrees so that it is side scrollable
         self.tableView.transform = CGAffineTransformMakeRotation(-M_PI_2);
@@ -281,11 +284,17 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         self.layer.shadowRadius = 5;
         self.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
         
-        // UITableView need to load to call this
-        [self performSelector:@selector(setupTableViewContent) withObject:nil afterDelay:0.1];
-        
     }
     return self;
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    [self setupTableViewContent];
+
+    [self setCurrentDate:self.currentDate animated:NO];
 }
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
@@ -483,7 +492,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
             
             if (distance < self.dayCellSize.width/2 && distance > -self.dayCellSize.width/2) {
                 
-                cell.containerView.backgroundColor = kDefaultColorBackground;
+                cell.containerView.backgroundColor = self.backgroundPickerColor;
                 cell.containerView.layer.shadowOpacity = shadowStep;
                 
             } else {
@@ -596,7 +605,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     [self setShadowForCell:cell];
     
     if (indexPath.row == _currentIndex.row) {
-        cell.containerView.backgroundColor = kDefaultColorBackground;
+        cell.containerView.backgroundColor = self.backgroundPickerColor;
         cell.containerView.layer.shadowOpacity = 1.0;
         
         [cell setBottomBorderSlideHeight:1.0];
