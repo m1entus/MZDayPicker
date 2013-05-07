@@ -9,8 +9,9 @@
 #import "MZViewController.h"
 
 
-@interface MZViewController () <MZDayPickerDelegate, UITableViewDataSource, UITableViewDelegate>
+@interface MZViewController () <MZDayPickerDelegate, MZDayPickerDataSource, UITableViewDataSource, UITableViewDelegate>
 @property (nonatomic,strong) NSMutableArray *tableData;
+@property (nonatomic,strong) NSDateFormatter *dateFormatter;
 @end
 
 @implementation MZViewController
@@ -25,25 +26,35 @@
     self.tableView.dataSource = self;
     
     self.dayPicker.delegate = self;
+    self.dayPicker.dataSource = self;
     
     self.dayPicker.dayNameLabelFontSize = 12.0f;
     self.dayPicker.dayLabelFontSize = 18.0f;
     
+    self.dateFormatter = [[NSDateFormatter alloc] init];
+    [self.dateFormatter setDateFormat:@"EE"];
+    
     /*
-     * You can set month, year using:
+     *  You can set month, year using:
      *  self.dayPicker.month = 9;
      *  self.dayPicker.year = 2013;
      *  [self.dayPicker setActiveDaysFrom:1 toDay:30];
      *  [self.dayPicker setCurrentDay:15 animated:NO];
      *
-     * or set up date range:
+     *  or set up date range:
      */
+    
     [self.dayPicker setStartDate:[NSDate dateFromDay:28 month:9 year:2013] endDate:[NSDate dateFromDay:5 month:10 year:2013]];
     
     [self.dayPicker setCurrentDate:[NSDate dateFromDay:3 month:10 year:2013] animated:NO];
-
+    
     self.tableView.frame = CGRectMake(0, self.dayPicker.frame.origin.y + self.dayPicker.frame.size.height, self.tableView.frame.size.width, self.view.bounds.size.height-self.dayPicker.frame.size.height);
     
+}
+
+- (NSString *)dayPicker:(MZDayPicker *)dayPicker titleForCellDayNameLabelInDay:(MZDay *)day
+{
+    return [self.dateFormatter stringFromDate:day.date];
 }
 
 
