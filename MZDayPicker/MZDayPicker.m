@@ -366,9 +366,9 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 
 - (void)setStartDate:(NSDate *)startDate endDate:(NSDate *)endDate
 {
-    _startDate = startDate;
-    _endDate = endDate;
-    
+    _startDate = [NSDate dateWithNoTime:startDate middleDay:YES];
+    _endDate = [NSDate dateWithNoTime:endDate middleDay:YES];
+
     NSMutableArray *tableData = [NSMutableArray array];
     
     NSDateFormatter *dateNameFormatter = [[NSDateFormatter alloc] init];
@@ -378,27 +378,24 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     [dateNumberFormatter setDateFormat:@"dd"];
     
     for (int i = kDefaultInitialInactiveDays; i >= 1; i--) {
-        NSDate *date = [startDate dateByAddingTimeInterval:-(i * 60.0 * 60.0 * 24.0)];
-        
-        NSDate *middleDay = [date dateByAddingTimeInterval:(60.0 * 60.0 * 12.0)];
+        NSDate *date = [_startDate dateByAddingTimeInterval:-(i * 60.0 * 60.0 * 24.0)];
         
         MZDay *newDay = [[MZDay alloc] init];
-        newDay.day = @([[dateNumberFormatter stringFromDate:middleDay] integerValue]);
-        newDay.name = [dateNameFormatter stringFromDate:middleDay];
-        newDay.date = middleDay;
+        newDay.day = @([[dateNumberFormatter stringFromDate:date] integerValue]);
+        newDay.name = [dateNameFormatter stringFromDate:date];
+        newDay.date = date;
         
         [tableData addObject:newDay];
     }
     
     NSInteger numberOfActiveDays = 0;
     
-    for (NSDate *date = startDate; [date compare: endDate] <= 0; date = [date dateByAddingTimeInterval:24 * 60 * 60] ) {
-        NSDate *middleDay = [date dateByAddingTimeInterval:(60.0 * 60.0 * 12.0)];
-        
+    for (NSDate *date = _startDate; [date compare: _endDate] <= 0; date = [date dateByAddingTimeInterval:24 * 60 * 60] ) {
+
         MZDay *newDay = [[MZDay alloc] init];
-        newDay.day = @([[dateNumberFormatter stringFromDate:middleDay] integerValue]);
-        newDay.name = [dateNameFormatter stringFromDate:middleDay];
-        newDay.date = middleDay;
+        newDay.day = @([[dateNumberFormatter stringFromDate:date] integerValue]);
+        newDay.name = [dateNameFormatter stringFromDate:date];
+        newDay.date = date;
         
         [tableData addObject:newDay];
         
@@ -406,14 +403,12 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     }
     
     for (int i = 1; i <= kDefaultFinalInactiveDays; i++) {
-        NSDate *date = [endDate dateByAddingTimeInterval:(i * 60.0 * 60.0 * 24.0)];
-        
-        NSDate *middleDay = [date dateByAddingTimeInterval:(60.0 * 60.0 * 12.0)];
-        
+        NSDate *date = [_endDate dateByAddingTimeInterval:(i * 60.0 * 60.0 * 24.0)];
+
         MZDay *newDay = [[MZDay alloc] init];
-        newDay.day = @([[dateNumberFormatter stringFromDate:middleDay] integerValue]);
-        newDay.name = [dateNameFormatter stringFromDate:middleDay];
-        newDay.date = middleDay;
+        newDay.day = @([[dateNumberFormatter stringFromDate:date] integerValue]);
+        newDay.name = [dateNameFormatter stringFromDate:date];
+        newDay.date = date;
         
         [tableData addObject:newDay];
     }
@@ -652,6 +647,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 {
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDateComponents *components = [[NSDateComponents alloc] init];
+    [calendar setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
     
     [components setDay:day];
     
@@ -667,7 +663,27 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     }
     
     
-    return [calendar dateFromComponents:components];
+    return [NSDate dateWithNoTime:[calendar dateFromComponents:components] middleDay:NO];
+}
+
++ (NSDate *)dateWithNoTime:(NSDate *)dateTime middleDay:(BOOL)middle
+{
+    if( dateTime == nil ) {
+        dateTime = [NSDate date];
+    }
+    
+    NSCalendar       *calendar   = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    [calendar setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
+    NSDateComponents *components = [[NSDateComponents alloc] init];
+    components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit
+                             fromDate:dateTime];
+    
+    NSDate *dateOnly = [calendar dateFromComponents:components];
+    
+    if (middle)
+       [dateOnly dateByAddingTimeInterval:(60.0 * 60.0 * 12.0)];           // Push to Middle of day. 
+
+    return dateOnly;
 }
 
 - (NSUInteger)numberOfDaysInMonth
