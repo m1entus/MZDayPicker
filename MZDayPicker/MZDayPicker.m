@@ -174,17 +174,18 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     if (date) {
         NSInteger components = (NSDayCalendarUnit | NSMonthCalendarUnit | NSYearCalendarUnit);
         
-        NSDateComponents *componentsFromDate = [[NSCalendar currentCalendar] components:components
+        NSCalendar *currentCalendar = [NSCalendar currentCalendar];
+        NSDateComponents *componentsFromDate = [currentCalendar components:components
                                                                                fromDate:date];
         
         [self.tableDaysData enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
             MZDay *day = obj;
             
-            NSDateComponents *componentsFromDayDate = [[NSCalendar currentCalendar] components:components
+            NSDateComponents *componentsFromDayDate = [currentCalendar components:components
                                                                                       fromDate: day.date];
             
-            NSDate *searchingDate = [[NSCalendar currentCalendar] dateFromComponents:componentsFromDate];
-            NSDate *dayDate = [[NSCalendar currentCalendar] dateFromComponents:componentsFromDayDate];
+            NSDate *searchingDate = [currentCalendar dateFromComponents:componentsFromDate];
+            NSDate *dayDate = [currentCalendar dateFromComponents:componentsFromDayDate];
             
             NSComparisonResult result = [searchingDate compare:dayDate];
             
