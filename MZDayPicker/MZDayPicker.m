@@ -682,7 +682,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     NSDate *dateOnly = [calendar dateFromComponents:components];
     
     if (middle)
-       [dateOnly dateByAddingTimeInterval:(60.0 * 60.0 * 12.0)];           // Push to Middle of day. 
+       dateOnly = [dateOnly dateByAddingTimeInterval:(60.0 * 60.0 * 12.0)];           // Push to Middle of day. 
 
     return dateOnly;
 }
