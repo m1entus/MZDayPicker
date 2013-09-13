@@ -583,7 +583,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     
     cell.dayLabel.textColor = self.activeDayNameColor;
     cell.dayLabel.font = [cell.dayLabel.font fontWithSize:self.dayLabelFontSize];
-    cell.dayNameLabel.font = [cell.dayLabel.font fontWithSize:self.dayNameLabelFontSize];
+    cell.dayNameLabel.font = [cell.dayNameLabel.font fontWithSize:self.dayNameLabelFontSize]; //This was set to the same font, making it impossible to have seperate fonts for day and number
     cell.dayNameLabel.textColor = self.activeDayNameColor;
     [cell setBottomBorderColor:self.bottomBorderColor];
     
