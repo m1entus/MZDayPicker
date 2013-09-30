@@ -25,6 +25,87 @@
 
 #import "MZDay.h"
 
+static NSCalendar *gregorianCalendar;
+static NSArray *monthNames;
+static NSArray *monthShortNames;
+
 @implementation MZDay
+
++ (void)initialize
+{
+	if (self == [MZDay class]) {
+		monthNames = @[NSLocalizedString(@"January", nil),
+					   NSLocalizedString(@"February", nil),
+					   NSLocalizedString(@"March", nil),
+					   NSLocalizedString(@"April", nil),
+					   NSLocalizedString(@"May", nil),
+					   NSLocalizedString(@"June", nil),
+					   NSLocalizedString(@"July", nil),
+					   NSLocalizedString(@"August", nil),
+					   NSLocalizedString(@"September", nil),
+					   NSLocalizedString(@"October", nil),
+					   NSLocalizedString(@"November", nil),
+					   NSLocalizedString(@"December", nil)];
+
+		monthShortNames = @[NSLocalizedString(@"Jan", nil),
+							NSLocalizedString(@"Feb", nil),
+							NSLocalizedString(@"Mar", nil),
+							NSLocalizedString(@"Apr", nil),
+							NSLocalizedString(@"May", nil),
+							NSLocalizedString(@"Jun", nil),
+							NSLocalizedString(@"Jul", nil),
+							NSLocalizedString(@"Aug", nil),
+							NSLocalizedString(@"Sep", nil),
+							NSLocalizedString(@"Oct", nil),
+							NSLocalizedString(@"Nov", nil),
+							NSLocalizedString(@"Dec", nil)];
+	}
+}
+
+- (NSDateComponents *)dateComponents
+{
+	if (gregorianCalendar == nil) {
+		gregorianCalendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+		[gregorianCalendar setLocale:[NSLocale currentLocale]];
+	}
+	return [gregorianCalendar components:(NSYearCalendarUnit | NSMonthCalendarUnit | NSDayCalendarUnit) fromDate:self.date];
+}
+
+- (NSNumber *)day
+{
+	if (_day == nil && _date != nil) {
+		NSDateComponents *dateComponents = [self dateComponents];
+		_day = @(dateComponents.day);
+	}
+	return _day;
+}
+
+- (NSNumber *)month
+{
+	if (_month == nil && _date != nil) {
+		NSDateComponents *dateComponents = [self dateComponents];
+		_month = @(dateComponents.month);
+	}
+	return _month;
+}
+
+- (NSString *)monthName
+{
+	return [monthNames objectAtIndex:[self.month unsignedIntegerValue]-1];
+}
+
+- (NSString *)monthShortName
+{
+	return [monthShortNames objectAtIndex:[self.month unsignedIntegerValue]-1];
+}
+
+- (NSNumber *)year
+{
+	if (_year == nil && _date != nil) {
+		NSDateComponents *dateComponents = [self dateComponents];
+		_year = @(dateComponents.year);
+	}
+	return _year;
+}
 
 @end
