@@ -66,9 +66,6 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 
 @interface MZDayPicker () <UITableViewDelegate, UITableViewDataSource>
 
-// initialFrame property is a hack for initWithCoder:
-@property (nonatomic, assign) CGRect initialFrame;
-
 @property (nonatomic, strong) NSIndexPath* currentIndex;
 
 @property (nonatomic, assign) CGSize dayCellSize;
@@ -235,56 +232,53 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     [self setupTableViewContent];
 }
 
-- (void)setFrame:(CGRect)frame
+- (void)setup
 {
-    if (CGRectIsEmpty(self.initialFrame)) self.initialFrame = frame;
-    
-    [super setFrame:CGRectMake(frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)];
+	_activeDayColor = kDefaultColorDay;
+	_activeDayNameColor = kDefaultColorDayName;
+	_inactiveDayColor = kDefaultColorInactiveDay;
+	_backgroundPickerColor = kDefaultColorBackground;
+	_bottomBorderColor = kDefaultColorBottomBorder;
+	_dayLabelZoomScale = kDefaultDayLabelMaxZoomValue;
+	_dayLabelFontSize = kDefaultDayLabelFontSize;
+	_dayNameLabelFontSize = kDefaultDayNameLabelFontSize;
+
+	[self setActiveDaysFrom:1 toDay:[NSDate dateFromDay:1 month:self.month year:self.year].numberOfDaysInMonth-1];
+
+	// Make the UITableView's height the width, and width the height so that when we rotate it it will fit exactly
+	self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.height, self.frame.size.width)];
+	self.tableView.delegate = self;
+	self.tableView.dataSource = self;
+	self.tableView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
+
+	// Rotate the tableview by 90 degrees so that it is side scrollable
+	self.tableView.transform = CGAffineTransformMakeRotation(-M_PI_2);
+	self.tableView.center = self.center;
+	self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+	self.tableView.backgroundColor = [UIColor clearColor];
+	self.tableView.showsVerticalScrollIndicator = NO;
+	self.tableView.decelerationRate = UIScrollViewDecelerationRateFast;
+
+	UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
+	[self.tableView addGestureRecognizer:tapGesture];
+
+	[self addSubview: self.tableView];
+	[self setClipsToBounds:YES];
+
+	self.tableView.frame = CGRectInset(self.bounds, 10, 5);
+	self.backgroundColor = kDefaultColorBackground;
+
+	self.layer.shadowColor = kDefaultShadowColor.CGColor;
+	self.layer.shadowOffset = kDefaultShadowOffset;
+	self.layer.shadowOpacity = kDefaultShadowOpacity;
+	self.layer.shadowRadius = 5;
+	self.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
     if (self = [super initWithFrame:frame]) {
-        
-        _activeDayColor = kDefaultColorDay;
-        _activeDayNameColor = kDefaultColorDayName;
-        _inactiveDayColor = kDefaultColorInactiveDay;
-        _backgroundPickerColor = kDefaultColorBackground;
-        _bottomBorderColor = kDefaultColorBottomBorder;
-        _dayLabelZoomScale = kDefaultDayLabelMaxZoomValue;
-        _dayLabelFontSize = kDefaultDayLabelFontSize;
-        _dayNameLabelFontSize = kDefaultDayNameLabelFontSize;
-        
-        [self setActiveDaysFrom:1 toDay:[NSDate dateFromDay:1 month:self.month year:self.year].numberOfDaysInMonth-1];
-        
-        // Make the UITableView's height the width, and width the height so that when we rotate it it will fit exactly
-        self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, frame.size.height, frame.size.width)];
-        self.tableView.delegate = self;
-        self.tableView.dataSource = self;
-        self.tableView.autoresizingMask = (UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin);
-        
-        // Rotate the tableview by 90 degrees so that it is side scrollable
-        self.tableView.transform = CGAffineTransformMakeRotation(-M_PI_2);
-        self.tableView.center = self.center;
-        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
-        self.tableView.backgroundColor = [UIColor clearColor];
-        self.tableView.showsVerticalScrollIndicator = NO;
-        self.tableView.decelerationRate = UIScrollViewDecelerationRateFast;
-        
-        UITapGestureRecognizer *tapGesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGestureRecognizer:)];
-        [self.tableView addGestureRecognizer:tapGesture];
-        
-        [self addSubview: self.tableView];
-        
-        self.backgroundColor = kDefaultColorBackground;
-        
-        self.layer.frame = CGRectMake(0, 0, self.layer.frame.size.width, self.layer.frame.size.height-self.dayCellFooterHeight);
-        self.layer.shadowColor = kDefaultShadowColor.CGColor;
-        self.layer.shadowOffset = kDefaultShadowOffset;
-        self.layer.shadowOpacity = kDefaultShadowOpacity;
-        self.layer.shadowRadius = 5;
-        self.layer.shadowPath = [UIBezierPath bezierPathWithRect:self.bounds].CGPath;
-        
+		[self setup];
     }
     return self;
 }
@@ -292,7 +286,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    
+
     [self setupTableViewContent];
 
     [self setCurrentDate:self.currentDate animated:NO];
@@ -301,15 +295,17 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
     if (self = [super initWithCoder:aDecoder]) {
+		[self setup];
 
-        self =  [self initWithFrame:CGRectMake(0, 0, self.initialFrame.size.width, self.initialFrame.size.height) dayCellSize:CGSizeMake(self.initialFrame.size.height-kDefaultCellFooterHeight, self.initialFrame.size.height-kDefaultCellFooterHeight) dayCellFooterHeight:kDefaultCellFooterHeight month:1 year:1970];
+		_dayCellSize = CGSizeMake(kDefaultCellWidth, CGRectGetHeight(self.tableView.frame));
+		_dayCellFooterHeight = kDefaultCellFooterHeight/2.0;
 
-        if ([[UIDevice currentDevice].systemVersion floatValue] >= 6.0) {
-            self.frame = CGRectMake(self.initialFrame.origin.x, 0, self.frame.size.width, self.initialFrame.origin.y+self.frame.size.height+self.dayCellFooterHeight);
-        } else {
-            self.frame = CGRectMake(self.initialFrame.origin.x, self.initialFrame.origin.y, self.frame.size.width, self.initialFrame.size.height+self.dayCellFooterHeight);
-        }
-        
+		_month = 1;
+		_year = 1970;
+
+		[self fillTableDataWithCurrentMonth];
+
+		self.currentDay = 14;
     }
 
     return self;
@@ -362,7 +358,6 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     CGFloat contentSizeLimit = startActiveDaysWidth + ((self.activeDays.length+1)*self.dayCellSize.width) + (self.frame.size.width/2) - (self.dayCellSize.width/2);
     
     self.tableView.contentSize = CGSizeMake(self.tableView.frame.size.height, contentSizeLimit);
-    
 }
 
 - (void)setStartDate:(NSDate *)startDate endDate:(NSDate *)endDate
@@ -673,7 +668,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         dateTime = [NSDate date];
     }
     
-    NSCalendar       *calendar   = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
+    NSCalendar *calendar = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     [calendar setTimeZone:[NSTimeZone timeZoneWithAbbreviation:@"UTC"]];
     NSDateComponents *components = [[NSDateComponents alloc] init];
     components = [calendar components:NSYearCalendarUnit|NSMonthCalendarUnit|NSDayCalendarUnit

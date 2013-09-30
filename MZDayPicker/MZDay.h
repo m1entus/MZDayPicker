@@ -33,4 +33,8 @@
 @property (nonatomic,strong) NSNumber *year;
 
 @property (nonatomic,strong) NSString *name;
+
+- (NSString *)monthName;
+- (NSString *)monthShortName;
+
 @end
