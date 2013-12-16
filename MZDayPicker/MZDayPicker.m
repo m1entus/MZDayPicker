@@ -616,12 +616,12 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
     }
     
     if (NSRangeContainsRow(self.activeDays, indexPath.row - kDefaultInitialInactiveDays + 1)) {
-        cell.dayLabel.textColor = kDefaultColorDay;
-        cell.dayNameLabel.textColor = kDefaultColorDayName;
+        cell.dayLabel.textColor = self.activeDayColor;
+        cell.dayNameLabel.textColor = self.activeDayNameColor;
         
     } else {
-        cell.dayLabel.textColor = kDefaultColorInactiveDay;
-        cell.dayNameLabel.textColor = kDefaultColorInactiveDay;
+        cell.dayLabel.textColor = self.inactiveDayColor;
+        cell.dayNameLabel.textColor = self.inactiveDayColor;
     }
     
     return cell;
