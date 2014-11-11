@@ -265,7 +265,7 @@ static BOOL NSRangeContainsRow (NSRange range, NSInteger row) {
         
         // Rotate the tableview by 90 degrees so that it is side scrollable
         self.tableView.transform = CGAffineTransformMakeRotation(-M_PI_2);
-        self.tableView.center = self.center;
+        self.tableView.center = CGPointMake(self.frame.size.width/2, self.frame.size.height/2);
         self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         self.tableView.backgroundColor = [UIColor clearColor];
         self.tableView.showsVerticalScrollIndicator = NO;
