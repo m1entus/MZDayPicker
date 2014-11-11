@@ -30,9 +30,6 @@
 @property (nonatomic,assign) CGSize cellSize;
 @property (nonatomic,assign) CGFloat footerHeight;
 
-@property (nonatomic, strong) UIView *containerView;
-@property (nonatomic, strong) UILabel *dayLabel;
-@property (nonatomic, strong) UILabel *dayNameLabel;
 @end
 
 @implementation MZDayPickerCell
@@ -106,35 +103,36 @@
 
 - (void)applyCellStyle
 {
-    UIView* containingView = [[UIView alloc] initWithFrame:CGRectMake(self.footerHeight, 0, self.cellSize.width, self.cellSize.height)];
+    _containerView = [[UIView alloc] initWithFrame:CGRectMake(self.footerHeight, 0, self.cellSize.width, self.cellSize.height)];
     
-    self.dayLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.cellSize.width, self.cellSize.height)];
-    self.dayLabel.center = CGPointMake(containingView.frame.size.width/2, self.cellSize.height/2.6);
-    self.dayLabel.textAlignment = NSTextAlignmentCenter;
-    self.dayLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:self.dayLabel.font.pointSize];
-    self.dayLabel.backgroundColor = [UIColor clearColor];
+    _dayLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.cellSize.width, self.cellSize.height)];
+    _dayLabel.center = CGPointMake(_containerView.frame.size.width/2, self.cellSize.height/2.6);
+    _dayLabel.textAlignment = NSTextAlignmentCenter;
+    _dayLabel.font = [UIFont fontWithName:@"HelveticaNeue" size:self.dayLabel.font.pointSize];
+    _dayLabel.backgroundColor = [UIColor clearColor];
     
-    self.dayNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.cellSize.width, self.cellSize.height)];
-    self.dayNameLabel.center = CGPointMake(containingView.frame.size.width/2, self.cellSize.height/1.3);
-    self.dayNameLabel.textAlignment = NSTextAlignmentCenter;
-    self.dayNameLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:self.dayNameLabel.font.pointSize];
-    self.dayNameLabel.backgroundColor = [UIColor clearColor];
+    _dayNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.cellSize.width, self.cellSize.height)];
+    _dayNameLabel.center = CGPointMake(_containerView.frame.size.width/2, self.cellSize.height/1.3);
+    _dayNameLabel.textAlignment = NSTextAlignmentCenter;
+    _dayNameLabel.font = [UIFont fontWithName:@"HelveticaNeue-Medium" size:self.dayNameLabel.font.pointSize];
+    _dayNameLabel.backgroundColor = [UIColor clearColor];
     
-    [containingView addSubview: self.dayLabel];
-    [containingView addSubview: self.dayNameLabel];
+    [_containerView addSubview: self.dayLabel];
+    [_containerView addSubview: self.dayNameLabel];
     
-    self.containerView = containingView;
     
-    UIView *bottomBorder = [[UIView alloc] initWithFrame:CGRectMake(0, self.cellSize.height, containingView.bounds.size.width, self.footerHeight)];
+    UIView *bottomBorder = [[UIView alloc] initWithFrame:CGRectMake(0, self.cellSize.height, _containerView.bounds.size.width, self.footerHeight)];
     
     self.bottomBorderView = bottomBorder;
-    [containingView addSubview:bottomBorder];
+    [_containerView addSubview:bottomBorder];
     
-    [containingView setTransform:CGAffineTransformMakeRotation(M_PI_2)];
-    [self addSubview:containingView];
+    [_containerView setTransform:CGAffineTransformMakeRotation(M_PI_2)];
+    [self addSubview:_containerView];
+    
+    self.backgroundColor = [UIColor clearColor];
     
     if (self.cellSize.width != self.cellSize.height) {
-        containingView.frame = CGRectMake(self.footerHeight, 0, self.cellSize.height, self.cellSize.width);
+        _containerView.frame = CGRectMake(self.footerHeight, 0, self.cellSize.height, self.cellSize.width);
     }
 }
 
