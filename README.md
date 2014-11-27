@@ -138,3 +138,7 @@ MZDayPicker uses ARC.
 
 [Michal Zaborowski](http://github.com/m1entus) 
 
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/m1entus/mzdaypicker/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
