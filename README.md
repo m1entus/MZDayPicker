@@ -1,7 +1,28 @@
 MZDayPicker
 ===========
 
-An iOS day picker to allow users to select date
+The MZDayPicker is a library written in Objective-C which allows users to 
+select various dates from an integrated GUI and add them to a displayed 
+list. It is designed for iOS and can be integrated into user generated 
+applications. 
+
+## Why this Project?
+
+This project was created so that users could easily integrate a date 
+selection component into applications that they may be developing. It 
+supports storyboard functionality in iOS development, meaning that it can 
+be readily added to the interface and connection screens seen in Xcode. As 
+a result, it is simple to use and connect with exisiting applications, 
+unlike many libraries which already exist for this feature set.
+
+## Additional Features
+In addition to the base day picker functionality detailed above, there are 
+a few other integrated features which were included with the user in mind. 
+Firstly, users can set a start and end date range rather than manually 
+selecting desired dates. Additionally, users can select font colors, 
+background colors, cell colors, and change font sizes all so that the 
+MZDayPicker storyboard matches the visual theme of the application in 
+development by the user.
 
 [![](https://raw.github.com/m1entus/MZDayPicker/master/Screens/screen1.png)](https://raw.github.com/m1entus/MZDayPicker/master/Screens/screen1@2x.png)
 [![](https://raw.github.com/m1entus/MZDayPicker/master/Screens/animation.gif)](https://raw.github.com/m1entus/MZDayPicker/master/Screens/animation.gif)
